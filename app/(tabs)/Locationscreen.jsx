@@ -1,62 +1,97 @@
-import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import React, { useState } from 'react';
-import { Picker } from '@react-native-picker/picker';
-import Ticketscreen from './Ticketscreen';
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { useNavigation } from '@react-navigation/native';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
-const Locationscreen = ({ route , navigation}) => {
-  const { selectedroute, selectedname } = route.params || {};  
 
-  // State variables for pickers
-  const [boardingLocation, setBoardingLocation] = useState("");
-  const [destinationLocation, setDestinationLocation] = useState("");
+const GOOGLE_MAP_KEY = "vniedbv";
 
-  // Function to handle submit
-  const handleSubmit = () => {
-    if (!boardingLocation || !destinationLocation) {
-      Alert.alert("Missing Selection", "Please select both Boarding and Destination locations.");
-      return;
-    } 
-    else{
-      navigation.navigate('Ticketscreen' , {name : selectedname , routename : selectedroute , boardingLocation : boardingLocation , destinationLocation : destinationLocation});
+const Locationscreen = ({ route }) => {
+  const { selectedroute, busNumber } = route.params || {}; // ✅ Extract busNumber
+  const navigation = useNavigation();
+  
+  const [boardingLocation, setBoardingLocation] = useState(null);
+  const [destinationLocation, setDestinationLocation] = useState(null);
+  const [distance, setDistance] = useState(null);
+
+  // Fetch distance from Google Maps Directions API
+  const fetchDistance = async (origin, destination) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${GOOGLE_MAP_KEY}`
+      );
+      const data = await response.json();
+      
+      if (data.routes.length > 0) {
+        const routeDistance = data.routes[0].legs[0].distance.text;
+        setDistance(routeDistance);
+      } else {
+        Alert.alert("Error", "Could not fetch route distance.");
+        setDistance(null);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to get distance.");
+      console.error(error);
     }
-    Alert.alert("Route Confirmed", `Boarding: ${boardingLocation}\nDestination: ${destinationLocation}`);
+  };
+
+  const handleLocationSelect = (type, data, details) => {
+    const location = {
+      name: data.structured_formatting.main_text,
+      lat: details.geometry.location.lat,
+      lng: details.geometry.location.lng,
+    };
+
+    if (type === "boarding") {
+      setBoardingLocation(location);
+      if (destinationLocation) fetchDistance(location, destinationLocation);
+    } else {
+      setDestinationLocation(location);
+      if (boardingLocation) fetchDistance(boardingLocation, location);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!boardingLocation || !destinationLocation || !distance) {
+      Alert.alert("Error", "Please select both locations.");
+      return;
+    }
+    
+    navigation.navigate("Ticketscreen", {
+      boardingLocation: boardingLocation.name,
+      destinationLocation: destinationLocation.name,
+      distance: distance,
+      busno:busNumber,
+    });
   };
 
   return (
-    <View>
-      <Text style={styles.text}>Hello, {selectedname || "Guest"}</Text>
-      <Text style={styles.routeText}>Selected Route: {selectedroute}</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Bus No: {busNumber || 'Unknown'}</Text> 
 
-      {/* Boarding Location Picker */}
       <Text style={styles.label}>Enter Boarding Location:</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={boardingLocation}
-          onValueChange={(itemValue) => setBoardingLocation(itemValue)}
-        >
-          <Picker.Item label="Please select an option..." value="" enabled={false} />
-          <Picker.Item label="Location A" value="Location A" />
-          <Picker.Item label="Location B" value="Location B" />
-          <Picker.Item label="Location C" value="Location C" />
-        </Picker>
-      </View>
+      <GooglePlacesAutocomplete
+        placeholder="Search City"
+        query={{ key: GOOGLE_MAP_KEY, types: "(cities)" }}
+        fetchDetails={true}
+        onPress={(data, details) => handleLocationSelect("boarding", data, details)}
+        styles={autoCompleteStyles}
+      />
 
-      {/* Destination Location Picker */}
       <Text style={styles.label}>Enter Destination Location:</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={destinationLocation}
-          onValueChange={(itemValue) => setDestinationLocation(itemValue)}
-        >
-          <Picker.Item label="Please select an option..." value="" enabled={false} />
-          <Picker.Item label="Location X" value="Location X" />
-          <Picker.Item label="Location Y" value="Location Y" />
-          <Picker.Item label="Location Z" value="Location Z" />
-        </Picker>
-      </View>
+      <GooglePlacesAutocomplete
+        placeholder="Search City"
+        query={{ key: GOOGLE_MAP_KEY, types: "(cities)" }}
+        fetchDetails={true}
+        onPress={(data, details) => handleLocationSelect("destination", data, details)}
+        styles={autoCompleteStyles}
+      />
 
-      {/* Submit Button */}
-      <TouchableOpacity style={styles.buttoncontainer} onPress={handleSubmit}>
+      {distance && <Text style={styles.distanceText}>Distance: {distance}</Text>}
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit Route</Text>
       </TouchableOpacity>
     </View>
@@ -65,56 +100,23 @@ const Locationscreen = ({ route , navigation}) => {
 
 export default Locationscreen;
 
-// Styles
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginLeft: 20,
+  container: { flex: 1, padding: 20 },
+  text: { fontSize: 24, fontWeight: 'bold' },
+  routeText: { fontSize: 20, fontWeight: 'bold', color: 'blue', marginTop: 10 },
+  label: { fontSize: 18, marginTop: 20, fontWeight: 'bold' },
+  distanceText: { fontSize: 18, marginTop: 10, fontWeight: 'bold', color: 'green' },
+  button: {
     marginTop: 20,
-  },
-  routeText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'blue',
-    marginTop: 20,
-    marginLeft: 20,
-  },
-  label: {
-    fontSize: 18,
-    marginLeft: 20,
-    marginTop: 50,
-    fontWeight: 'bold',
-  },
-  pickerContainer: {
-    marginLeft: 20,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 8,
-    overflow: 'hidden',
-    marginRight: 20,
-  },
-  buttoncontainer: {
-    width: '40%',
-    height: 45,
-    // alignSelf: 'center',
-    marginTop: 40,
-    marginRight:20,
-    marginLeft: 190,
-    borderRadius: 10,
+    padding: 15,
     backgroundColor: 'blue',
-    justifyContent: 'center',
+    borderRadius: 8,
     alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  buttonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
 });
+
+const autoCompleteStyles = {
+  container: { flex: 0, marginTop: 10 },
+  textInput: { height: 50, fontSize: 16 },
+};
