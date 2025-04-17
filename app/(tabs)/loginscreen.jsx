@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.68.138:8080/users/login", { // ✅ Fixed API URL
+      const response = await fetch("http://192.168.211.234:8080/users/login", { // ✅ Fixed API URL
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ busNo: busNumber, userid: password }),
@@ -76,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
       let { latitude, longitude } = location.coords;
 
       // ✅ Fixed API method (PUT instead of POST)
-      await fetch("http://192.168.68.138:8080/users/update-location", { 
+      await fetch("http://192.168.211.2348080/users/update-location", { 
         method: "PUT", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

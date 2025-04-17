@@ -49,8 +49,8 @@ const LocationScreen = () => {
       console.log(`Updating location: ${latitude}, ${longitude}`);
       if (!busNumber) return;
       try {
-        await fetch("http://192.168.68.138:8080/users/update-location", { 
-          method: "PUT", // ✅ Fixed method
+        await fetch("http://192.168.211.234:8080/users/update-location", { 
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ busNumber, latitude, longitude }),
         });

@@ -10,7 +10,7 @@ const Ticketscreen = ({ route }) => {
   const [childCount, setChildCount] = useState('');
   const [fare, setFare] = useState(0);
 
-  const API_BASE_URL = 'http://192.168.68.138:8080/users';
+  const API_BASE_URL = 'http://192.168.211.234.6:8080/users';
 
   const handleInputChange = (value, setter, maxLimit) => {
     let numericValue = value.replace(/[^0-9]/g, '');
