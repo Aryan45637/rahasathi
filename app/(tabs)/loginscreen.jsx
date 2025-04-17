@@ -76,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
       let { latitude, longitude } = location.coords;
 
       // ✅ Fixed API method (PUT instead of POST)
-      await fetch("http://192.168.211.2348080/users/update-location", { 
+      await fetch("http://192.168.211.234:8080/users/update-location", { 
         method: "PUT", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
