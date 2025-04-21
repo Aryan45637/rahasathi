@@ -6,7 +6,7 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 
-const GOOGLE_MAP_KEY = "AIzaSyCnpNJCA6Jo4tKgWzCYqo963XqBLQiVd_U";
+const GOOGLE_MAP_KEY = "AIz_U";
 
 const Locationscreen = ({ route }) => {
   const { selectedroute, busNumber } = route.params || {}; // ✅ Extract busNumber
