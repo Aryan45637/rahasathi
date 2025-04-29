@@ -4,9 +4,12 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { useNavigation } from '@react-navigation/native';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import Constants from 'expo-constants';
+
+const GOOGLE_MAPS_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
 
 
-const GOOGLE_MAP_KEY = "AIz_U";
+
 
 const Locationscreen = ({ route }) => {
   const { selectedroute, busNumber } = route.params || {}; // ✅ Extract busNumber
@@ -20,7 +23,7 @@ const Locationscreen = ({ route }) => {
   const fetchDistance = async (origin, destination) => {
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${GOOGLE_MAP_KEY}`
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${GOOGLE_MAPS_API_KEY }`
       );
       const data = await response.json();
       
@@ -74,7 +77,7 @@ const Locationscreen = ({ route }) => {
       <Text style={styles.label}>Enter Boarding Location:</Text>
       <GooglePlacesAutocomplete
         placeholder="Search City"
-        query={{ key: GOOGLE_MAP_KEY, types: "(cities)" }}
+        query={{ key: GOOGLE_MAPS_API_KEY, types: "(cities)" }}
         fetchDetails={true}
         onPress={(data, details) => handleLocationSelect("boarding", data, details)}
         styles={autoCompleteStyles}
@@ -83,7 +86,7 @@ const Locationscreen = ({ route }) => {
       <Text style={styles.label}>Enter Destination Location:</Text>
       <GooglePlacesAutocomplete
         placeholder="Search City"
-        query={{ key: GOOGLE_MAP_KEY, types: "(cities)" }}
+        query={{ key: GOOGLE_MAPS_API_KEY, types: "(cities)" }}
         fetchDetails={true}
         onPress={(data, details) => handleLocationSelect("destination", data, details)}
         styles={autoCompleteStyles}
