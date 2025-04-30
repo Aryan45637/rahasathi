@@ -2,6 +2,13 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, ActivityIndicator, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
+import Constants from 'expo-constants';
+
+const BASE_URL = Constants.expoConfig.extra.BASE_URL;
+
+
+
+
 
 const LoginScreen = ({ navigation }) => {
   const [busNumber, setBusNumber] = useState("");
@@ -32,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://192.168.211.234:8080/users/login", { // ✅ Fixed API URL
+      const response = await fetch(`${BASE_URL}/users/login`, { // ✅ Fixed API URL
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ busNo: busNumber, userid: password }),
@@ -76,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
       let { latitude, longitude } = location.coords;
 
       // ✅ Fixed API method (PUT instead of POST)
-      await fetch("http://192.168.211.234:8080/users/update-location", { 
+      await fetch(`${BASE_URL}/users/update-location`, { 
         method: "PUT", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
