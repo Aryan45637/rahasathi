@@ -1,9 +1,5 @@
 import 'dotenv/config';
 
-console.log("Loaded ENV Variables:");
-console.log("GOOGLE_MAPS_API_KEY:", process.env.GOOGLE_MAPS_API_KEY);
-console.log("BASE_URL:", process.env.BASE_URL);
-
 export default {
   expo: {
     name: "RahaSathi",
@@ -16,13 +12,18 @@ export default {
     newArchEnabled: true,
 
     ios: {
+      bundleIdentifier: "com.aryan.rahasathi",
       supportsTablet: true,
       config: {
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
 
     android: {
+      package: "com.Aryan.rahasathi",
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
@@ -42,7 +43,11 @@ export default {
 
     extra: {
       BASE_URL: process.env.BASE_URL,
-      GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+      GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+      "eas": {
+         "projectId": "dfc5858a-4151-4773-b70d-29bc95482100"
+      }
+
     },
 
     plugins: [
