@@ -1,5 +1,9 @@
 import 'dotenv/config';
 
+console.log("Loaded ENV Variables:");
+console.log("GOOGLE_MAPS_API_KEY:", process.env.GOOGLE_MAPS_API_KEY);
+console.log("BASE_URL:", process.env.BASE_URL);
+
 export default {
   expo: {
     name: "RahaSathi",
@@ -10,12 +14,14 @@ export default {
     scheme: "myapp",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
+
     ios: {
       supportsTablet: true,
       config: {
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     },
+
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
@@ -27,11 +33,18 @@ export default {
         }
       }
     },
+
     web: {
       bundler: "metro",
       output: "static",
       favicon: "./assets/images/favicon.png"
     },
+
+    extra: {
+      BASE_URL: process.env.BASE_URL,
+      GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+    },
+
     plugins: [
       "expo-router",
       [
@@ -44,6 +57,7 @@ export default {
         }
       ]
     ],
+
     experiments: {
       typedRoutes: true
     }

@@ -1,16 +1,21 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Constants from 'expo-constants';
+
+const BASE_URL = Constants.expoConfig.extra.BASE_URL;
+
+
 
 const Ticketscreen = ({ route }) => {
-  const { name, routename, boardingLocation, destinationLocation, distance , busno} = route.params || {};
+  const { name, routename, boardingLocation, destinationLocation, distance, busno } = route.params || {};
   const staticBusNumber = "AA"; // Static bus number for all requests
 
   const [ticketCount, setTicketCount] = useState('');
   const [childCount, setChildCount] = useState('');
   const [fare, setFare] = useState(0);
 
-  const API_BASE_URL = 'http://192.168.57.6:8080/users';
+  const API_BASE_URL = `${BASE_URL}/users`;
 
   const handleInputChange = (value, setter, maxLimit) => {
     let numericValue = value.replace(/[^0-9]/g, '');

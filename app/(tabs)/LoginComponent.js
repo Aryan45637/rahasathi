@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { View, Text, ActivityIndicator, Alert } from "react-native";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from 'expo-constants';
 
+const BASE_URL = Constants.expoConfig.extra.BASE_URL;
 
 const LocationScreen = () => {
   const [location, setLocation] = useState(null);
@@ -49,7 +51,7 @@ const LocationScreen = () => {
       console.log(`Updating location: ${latitude}, ${longitude}`);
       if (!busNumber) return;
       try {
-        await fetch("http://192.168.57.6:8080/users/update-location", { 
+        await fetch(`${BASE_URL}/users/update-location`, { 
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ busNumber, latitude, longitude }),

@@ -6,10 +6,11 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import Constants from 'expo-constants';
 
-const GOOGLE_MAPS_API_KEY = Constants.expoConfig.extra.googleMapsApiKey;
+
+const GOOGLE_MAPS_API_KEY = Constants.expoConfig.extra.GOOGLE_MAPS_API_KEY;
 
 
-
+console.log(GOOGLE_MAPS_API_KEY)
 
 const Locationscreen = ({ route }) => {
   const { selectedroute, busNumber } = route.params || {}; // ✅ Extract busNumber
